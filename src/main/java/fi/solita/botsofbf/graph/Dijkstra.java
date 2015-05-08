@@ -1,11 +1,19 @@
 package fi.solita.botsofbf.graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.Map.Entry;
+
+import fi.solita.botsofbf.BotController.Move;
 
 public class Dijkstra {
 
     private static boolean lastFailRoute = false;
+    private static Move directionToRecover = null;
 
     public static Node findPathSimple(Node target, Node from) {
         return GraphReader.getMapCache().get(getClosestItem(from.routes, from, target).to);
@@ -64,6 +72,7 @@ public class Dijkstra {
             double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
             if(distance2 < distance && distance2 < distance3) {
+            	lastFailRoute = false;
                 closest = i;
                 distance = distance2;
             }
@@ -81,5 +90,16 @@ public class Dijkstra {
 
         lastFailRoute = false;
         return closest;
+    }
+    
+    private static Move getRecoveryDirection(final Node me, final Move direction) {
+    	if(directionToRecover == null) {
+	    	List<Move> directions = Arrays.asList(Move.UP, Move.LEFT, Move.DOWN, Move.RIGHT);
+	    	directions.remove(direction);
+	    	Move newDirection = directions.get(new Random().nextInt(3));
+	    	directionToRecover = newDirection;
+    	}
+    	
+    	return directionToRecover;
     }
 }
