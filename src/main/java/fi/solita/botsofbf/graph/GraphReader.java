@@ -25,18 +25,20 @@ public class GraphReader {
                if(c == BotController.FLOOR_TILE) {
                    final Node n = new Node();
                    n.x = x;
-                   mapCache.put()                   
+                   n.y = y;
+                   n.id = getId(n);
+                   mapCache.put(n.id, n);
                }
                x++;
-
            }
             y++;
         }
 
+        return mapCache;
     }
 
 
-    private String getId(final Node node) {
+    private static String getId(final Node node) {
         return node.x + ":" + node.y;
     }
 
