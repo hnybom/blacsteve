@@ -6,5 +6,7 @@ package fi.solita.botsofbf.graph;
 public class Route {
 
     public int price;
+
+    public String from;
     public String to;
 }
