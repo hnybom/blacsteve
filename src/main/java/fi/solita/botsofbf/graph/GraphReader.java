@@ -16,6 +16,11 @@ public class GraphReader {
 
     public static Node exitNode;
 
+
+    public static Map<String, Node> getMapCache () {
+        return mapCache;
+    }
+
     public static Map<String, Node> loadMap (final List<String> tiles) {
         if (!mapCache.isEmpty()) return mapCache;
 
