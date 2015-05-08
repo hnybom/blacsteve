@@ -101,6 +101,10 @@ public class GraphReader {
         return ids;
     }
 
+    public Node getNodeByCoords(final int x, final int y) {
+        return mapCache.get(getId(x,y));
+    }
+
     private static void addIfNotWall (final List<String> ids, final String id) {
         if(mapCache.get(id).type != Node.WALL_TILE) ids.add(id);
     }
