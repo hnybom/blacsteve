@@ -1,11 +1,12 @@
 package fi.solita.botsofbf.graph;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Dijkstra {
 
@@ -39,8 +40,9 @@ public class Dijkstra {
 		while(!Q.isEmpty()) {
 			Entry<Node, Integer> entry = distances.entrySet().stream().filter(t -> Q.contains(t.getKey())).min(Map.Entry.comparingByValue()).get();
 			Q.remove(entry.getKey());
-			
-			for(Route r : entry.getKey().routes) {
+
+			final Stream<Route> routeStream = entry.getKey().routes.stream().filter(t -> Q.contains(mapCache.get(t.to)));
+			for(Route r : routeStream.collect(Collectors.toList())) {
 				int alt = distances.get(from) + r.price;
 				Node neighbor = mapCache.get(r.to);
 				if(alt < distances.get(neighbor)) {
