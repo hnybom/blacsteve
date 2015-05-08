@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import fi.solita.botsofbf.graph.Dijkstra;
 import fi.solita.botsofbf.graph.GraphReader;
 import fi.solita.botsofbf.graph.Node;
 
@@ -60,9 +61,19 @@ public class BotController {
         Set<Item> items = gameStateChanged.gameState.items;
         Map map = gameStateChanged.gameState.map;
         
-        java.util.Map<String, Node> nodes = GraphReader.loadMap(map.tiles);
-        for(java.util.Map.Entry<String, Node> entry : nodes.entrySet()) {
-        	System.out.println(entry.getValue());
+        GraphReader.loadMap(map.tiles);
+        
+        Node from = new Node();
+        from.x = myPlayer.position.x;
+        from.y = myPlayer.position.y;
+        
+        for(Item i : items) {
+        	Node target = new Node();
+        	target.x = i.position.x;
+        	target.y = i.position.y;
+        	
+        	Node next = Dijkstra.findPath(target, from);
+        	System.out.println(next);
         }
         
 
