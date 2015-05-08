@@ -8,6 +8,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
+import fi.solita.botsofbf.graph.GraphReader;
+import fi.solita.botsofbf.graph.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -64,6 +66,7 @@ public class BotController {
         	System.out.println(entry.getValue());
         }
         
+
         System.out.println("My player is at " + myPlayer.position);
         System.out.println("The map has " + items.size() + " items");
         System.out.println("The map consists of " + map.tiles.size() + " x " + map.tiles.get(0).length() + " tiles");
