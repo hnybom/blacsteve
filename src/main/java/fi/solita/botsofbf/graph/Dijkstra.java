@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 public class Dijkstra {
 
     public static Node findPathSimple(Node target, Node from) {
-        return GraphReader.getMapCache().get(getClosestItem(from.routes, target).to);
+        return GraphReader.getMapCache().get(getClosestItem(from.routes, from, target).to);
     }
 
 	public static Node findPath(Node target, Node from) {
@@ -45,17 +45,23 @@ public class Dijkstra {
 		return previous.get(from);
 	}
 
-    private static Route getClosestItem(final List<Route> route, final Node me) {
+    private static Route getClosestItem(final List<Route> route, final Node me, final Node target) {
         Route closest = route.iterator().next();
         double distance = Integer.MAX_VALUE;
+
+        int x1 = target.x;
+        int y1 = target.y;
+
+        double distance3 = Math.sqrt((x1 - me.x) * (x1 - me.x) + (y1 - me.y) * (y1 - me.y));
+
         for(Route i : route) {
-            int x1 = me.x;
             int x2 = GraphReader.getMapCache().get(i.to).x;
-            int y1 = me.y;
+
             int y2 = GraphReader.getMapCache().get(i.to).y;
 
             double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-            if(distance2 < distance) {
+
+            if(distance2 < distance && distance2 < distance3) {
                 closest = i;
                 distance = distance2;
             }
