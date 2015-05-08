@@ -22,12 +22,13 @@ public class GraphReader {
         for(String tile : tiles) {
            for(char c : tile.toCharArray()) {
                if(c == BotController.WALL_TILE) continue;
-               if(c == BotController.FLOOR_TILE) {
+               if(c == BotController.FLOOR_TILE || c == BotController.EXIT_TILE) {
                    final Node n = new Node();
                    n.x = x;
                    n.y = y;
                    n.id = getId(n);
                    mapCache.put(n.id, n);
+                   if(c == BotController.EXIT_TILE) exitNode = n;
                }
                x++;
            }
