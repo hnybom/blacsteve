@@ -101,7 +101,7 @@ public class GraphReader {
         return ids;
     }
 
-    public Node getNodeByCoords(final int x, final int y) {
+    public static Node getNodeByCoords(final int x, final int y) {
         return mapCache.get(getId(x,y));
     }
 

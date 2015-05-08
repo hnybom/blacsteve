@@ -18,7 +18,9 @@ import org.springframework.web.client.RestTemplate;
 
 import fi.solita.botsofbf.graph.Dijkstra;
 import fi.solita.botsofbf.graph.GraphReader;
+import fi.solita.botsofbf.graph.MoveTranslator;
 import fi.solita.botsofbf.graph.Node;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -67,28 +69,29 @@ public class BotController {
         Set<Item> items = gameStateChanged.gameState.items;
         Map map = gameStateChanged.gameState.map;
         
+        //System.out.println("start: " + System.currentTimeMillis());
         GraphReader.loadMap(map.tiles);
-        
-        Node from = new Node();
-        from.x = myPlayer.position.x;
-        from.y = myPlayer.position.y;
+        //System.out.println("map loaded: " + System.currentTimeMillis());
         
         
-        Node target = new Node();
         Item closest = getClosestItem(items, myPlayer);
-    	target.x = closest.position.x;
-    	target.y = closest.position.y;
+        Node from = GraphReader.getNodeByCoords(myPlayer.position.x, myPlayer.position.y);
+        Node target = GraphReader.getNodeByCoords(closest.position.x, closest.position.y);
     	
+        //System.out.println("starting dijrksrkskr: " + System.currentTimeMillis());
     	Node next = Dijkstra.findPath(target, from);
-    	System.out.println(next);
+    	System.out.println("path calculated: " + System.currentTimeMillis());
+    	
+    	System.out.println("next" + next);
+    	System.out.println("closest: " + target);
+    	System.out.println("my pos" + from);
         
 
         System.out.println("My player is at " + myPlayer.position);
         System.out.println("The map has " + items.size() + " items");
         System.out.println("The map consists of " + map.tiles.size() + " x " + map.tiles.get(0).length() + " tiles");
 
-        Move nextMove = Arrays.asList(Move.UP, Move.LEFT, Move.DOWN, Move.RIGHT).get(new Random().nextInt(4));
-        return nextMove;
+        return MoveTranslator.translate(from, next);
     }
 
     private void sendChatMessage(UUID playerId, String message) {
@@ -131,6 +134,7 @@ public class BotController {
         public int money;
         public int health;
         public List<Item> usableItems;
+        
     }
 
     public enum Move {
@@ -157,6 +161,11 @@ public class BotController {
     public static class Position {
         public int x;
         public int y;
+		@Override
+		public String toString() {
+			return "Position [x=" + x + ", y=" + y + "]";
+		}
+        
     }
 
     private static class Registration {
