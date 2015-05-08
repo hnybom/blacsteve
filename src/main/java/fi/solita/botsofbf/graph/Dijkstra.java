@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import fi.solita.botsofbf.BotController.Move;
 
@@ -14,10 +15,12 @@ public class Dijkstra {
 
     private static boolean lastFailRoute = false;
     private static Move directionToRecover = null;
+    private static Node lastFailed = null;
 
     public static Node findPathSimple(Node target, Node from) {
         return GraphReader.getMapCache().get(getClosestItem(from.routes, from, target).to);
     }
+
 
 	public static Node findPath(Node target, Node from) {
 		Map<Node, Integer> distances = new HashMap<Node, Integer>();
@@ -34,13 +37,15 @@ public class Dijkstra {
 				distances.put(n, Integer.MAX_VALUE);
 			}
 		}
-		
+
+        final List<Node> alreadyCalculcated = new ArrayList<>();
+
 		while(!Q.isEmpty()) {
 			Entry<Node, Integer> entry = distances.entrySet().stream().filter(t -> Q.contains(t.getKey())).min(Map.Entry.comparingByValue()).get();
 			Node u = entry.getKey();
 			Q.remove(u);
-			
-			for(Route r : u.routes) {
+            alreadyCalculcated.add(u);
+			for(Route r : u.routes.stream().filter(t -> !alreadyCalculcated.contains(mapCache.get(t.to))).collect(Collectors.toList()) ) {
 				int alt = distances.get(from) + r.price;
 				Node neighbor = mapCache.get(r.to);
 				if(alt < distances.get(neighbor)) {
@@ -71,8 +76,10 @@ public class Dijkstra {
 
             double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
-            if(distance2 < distance && distance2 < distance3) {
-            	lastFailRoute = false;
+            if(distance2 < distance && distance2 < distance3 &&
+                    !GraphReader.getMapCache().get(i.to).equals(lastFailed)) {
+                lastFailRoute = false;
+                lastFailed = null;
                 closest = i;
                 distance = distance2;
             }
@@ -80,15 +87,12 @@ public class Dijkstra {
 
         if(distance == Integer.MAX_VALUE || lastFailRoute) {
             lastFailRoute = true;
-            for(Route i : route) {
-                if(me.y < GraphReader.getMapCache().get(i.to).y) return i;
-                if(me.y > GraphReader.getMapCache().get(i.to).y) return i;
-                if(me.x < GraphReader.getMapCache().get(i.to).x) return i;
-                if(me.x > GraphReader.getMapCache().get(i.to).x) return i;
-            }
+            lastFailed = me;
+            Route i = getRoute(route, me);
+
+            if (i != null) return i;
         }
 
-        lastFailRoute = false;
         return closest;
     }
     
@@ -101,5 +105,15 @@ public class Dijkstra {
     	}
     	
     	return directionToRecover;
+    }
+
+    private static Route getRoute (final List<Route> route, final Node me) {
+        for(Route i : route) {
+            if(me.y < GraphReader.getMapCache().get(i.to).y) return i;
+            if(me.y > GraphReader.getMapCache().get(i.to).y) return i;
+            if(me.x < GraphReader.getMapCache().get(i.to).x) return i;
+            if(me.x > GraphReader.getMapCache().get(i.to).x) return i;
+        }
+        return null;
     }
 }
