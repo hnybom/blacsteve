@@ -1,12 +1,13 @@
 package fi.solita.botsofbf.graph;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 public class Dijkstra {
+
+    public static Node findPathSimple(Node target, Node from) {
+        return GraphReader.getMapCache().get(getClosestItem(from.routes, target).to);
+    }
 
 	public static Node findPath(Node target, Node from) {
 		Map<Node, Integer> distances = new HashMap<Node, Integer>();
@@ -43,4 +44,22 @@ public class Dijkstra {
 		
 		return previous.get(from);
 	}
+
+    private static Route getClosestItem(final List<Route> route, final Node me) {
+        Route closest = route.iterator().next();
+        double distance = Integer.MAX_VALUE;
+        for(Route i : route) {
+            int x1 = me.x;
+            int x2 = GraphReader.getMapCache().get(i.to).x;
+            int y1 = me.y;
+            int y2 = GraphReader.getMapCache().get(i.to).y;
+
+            double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+            if(distance2 < distance) {
+                closest = i;
+                distance = distance2;
+            }
+        }
+        return closest;
+    }
 }

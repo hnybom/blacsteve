@@ -1,10 +1,6 @@
 package fi.solita.botsofbf.graph;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by henriny on 08/05/15.
@@ -12,7 +8,7 @@ import java.util.Map;
 public class GraphReader {
 
     private static Map<String, Node> mapCache = new HashMap<>();
-    private static List<Route> routes = new ArrayList<>();
+    private static Set<Route> routes = new HashSet<>();
 
     public static Node exitNode;
 
@@ -58,11 +54,11 @@ public class GraphReader {
         return mapCache;
     }
 
-    public static List<Route> getRoutes() {
+    public static Set<Route> getRoutes() {
         return routes;
     }
 
-    public static List<Route> getRoutes(final List<String> tiles) {
+    public static Set<Route> getRoutes(final List<String> tiles) {
         if(routes.isEmpty()) loadMap(tiles);
         return routes;
     }
