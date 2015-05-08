@@ -19,6 +19,7 @@ public class GraphReader {
         if (!mapCache.isEmpty()) return mapCache;
 
         int x = 0;
+        int maxX = 0;
         int y = 0;
 
         for (String tile : tiles) {
@@ -32,11 +33,13 @@ public class GraphReader {
                 if (c == Node.EXIT_TILE) exitNode = n;
                 x++;
             }
+            maxX = x;
+            x = 0;
             y++;
         }
 
         for(final Node n : mapCache.values()) {
-            for(String ids : getNeighbourIds(n, x, y)) {
+            for(String ids : getNeighbourIds(n, maxX, y -1)) {
                 Route r = new Route();
                 r.from = n.id;
                 r.to = ids;
@@ -73,7 +76,7 @@ public class GraphReader {
         }
 
         if(xPlus <= maxX) {
-            final String id = getId(maxX, n.y);
+            final String id = getId(xPlus, n.y);
             addIfNotWall(ids, id);
         }
 

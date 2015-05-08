@@ -1,5 +1,7 @@
 package fi.solita.botsofbf;
 
+import fi.solita.botsofbf.graph.GraphReader;
+import fi.solita.botsofbf.graph.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -47,6 +49,8 @@ public class BotController {
         Player myPlayer = gameStateChanged.playerState;
         Set<Item> items = gameStateChanged.gameState.items;
         Map map = gameStateChanged.gameState.map;
+
+        final java.util.Map<String, Node> stringNodeMap = GraphReader.loadMap(map.tiles);
 
         System.out.println("My player is at " + myPlayer.position);
         System.out.println("The map has " + items.size() + " items");

@@ -21,5 +21,4 @@ public class Node {
 
     public List<Route> routes = new ArrayList<>();
 
-
 }

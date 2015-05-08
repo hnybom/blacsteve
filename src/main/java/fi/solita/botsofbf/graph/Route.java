@@ -9,4 +9,5 @@ public class Route {
 
     public String from;
     public String to;
+
 }
