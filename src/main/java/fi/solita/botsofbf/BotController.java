@@ -61,10 +61,17 @@ public class BotController {
         Item closest = getClosestItem(items, myPlayer);
         Node from = GraphReader.getNodeByCoords(myPlayer.position.x, myPlayer.position.y);
         Node target = GraphReader.getNodeByCoords(closest.position.x, closest.position.y);
+
+        if(from.id.equals(target.id)) {
+        	return BotController.Move.PICK;
+        }
+        
+    	Node next = Dijkstra.findPathSimple(target, from);
     	
-        long start = System.currentTimeMillis();
-    	Node next = Dijkstra.findPath(target, from);
-    	System.out.println("Dijkstra kestää: " + (System.currentTimeMillis() - start));
+    	
+    	
+    	
+    	
     	
     	System.out.println("next" + next);
     	System.out.println("closest: " + target);
