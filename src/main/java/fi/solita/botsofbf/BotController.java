@@ -8,8 +8,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import fi.solita.botsofbf.graph.GraphReader;
-import fi.solita.botsofbf.graph.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import fi.solita.botsofbf.graph.GraphReader;
 import fi.solita.botsofbf.graph.Node;
+
 
 
 @RestController

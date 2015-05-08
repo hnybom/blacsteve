@@ -1,6 +1,7 @@
 package fi.solita.botsofbf.graph;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,6 +63,8 @@ public class GraphReader {
     }
 
     public static List<String> getNeighbourIds(final Node n, final int maxX, final int maxY) {
+    	if(n.type == Node.WALL_TILE) return Collections.emptyList();
+    	
         final List<String> ids = new ArrayList<>();
 
         int xMinus = n.x - 1;
