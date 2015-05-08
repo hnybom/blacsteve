@@ -1,6 +1,7 @@
 package fi.solita.botsofbf.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,7 +25,7 @@ public class Node {
 	@Override
 	public String toString() {
 		return "Node [id=" + id + ", x=" + x + ", y=" + y + ", type=" + type
-				+ ", routes=" + routes + "]";
+				+ ", routes=" + Arrays.toString(routes.toArray()) + "]";
 	}
 
 
