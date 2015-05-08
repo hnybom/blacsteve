@@ -1,12 +1,23 @@
 package fi.solita.botsofbf;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+import java.util.UUID;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+import fi.solita.botsofbf.graph.GraphReader;
+import fi.solita.botsofbf.graph.Node;
 
 
 @RestController
@@ -14,10 +25,10 @@ public class BotController {
 
 
     // FIXME use correct server IP address
-    private static final String SERVER_ADDRESS = "http://192.168.2.86:8080";
+    private static final String SERVER_ADDRESS = "http://localhost:8080";
 
     private static final String MY_REST_API_PATH = "/move";
-    private static final String MY_REST_API_ADDRESS = "http://%s:8080" + MY_REST_API_PATH;
+    private static final String MY_REST_API_ADDRESS = "http://%s:3000" + MY_REST_API_PATH;
 
     private UUID myBotId;
 
@@ -47,7 +58,12 @@ public class BotController {
         Player myPlayer = gameStateChanged.playerState;
         Set<Item> items = gameStateChanged.gameState.items;
         Map map = gameStateChanged.gameState.map;
-
+        
+        java.util.Map<String, Node> nodes = GraphReader.loadMap(map.tiles);
+        for(java.util.Map.Entry<String, Node> entry : nodes.entrySet()) {
+        	System.out.println(entry.getValue());
+        }
+        
         System.out.println("My player is at " + myPlayer.position);
         System.out.println("The map has " + items.size() + " items");
         System.out.println("The map consists of " + map.tiles.size() + " x " + map.tiles.get(0).length() + " tiles");

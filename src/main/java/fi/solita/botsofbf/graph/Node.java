@@ -21,5 +21,11 @@ public class Node {
 
     public List<Route> routes = new ArrayList<>();
 
+	@Override
+	public String toString() {
+		return "Node [id=" + id + ", x=" + x + ", y=" + y + ", type=" + type
+				+ ", routes=" + routes + "]";
+	}
+
 
 }

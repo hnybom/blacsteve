@@ -36,7 +36,7 @@ public class GraphReader {
         }
 
         for(final Node n : mapCache.values()) {
-            for(String ids : getNeighbourIds(n, x, y)) {
+            for(String ids : getNeighbourIds(n, x -1, y -1)) {
                 Route r = new Route();
                 r.from = n.id;
                 r.to = ids;
@@ -73,7 +73,7 @@ public class GraphReader {
         }
 
         if(xPlus <= maxX) {
-            final String id = getId(maxX, n.y);
+            final String id = getId(xPlus, n.y);
             addIfNotWall(ids, id);
         }
 
