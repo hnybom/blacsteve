@@ -1,21 +1,5 @@
 package fi.solita.botsofbf;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
 import fi.solita.botsofbf.graph.Dijkstra;
 import fi.solita.botsofbf.graph.GraphReader;
 import fi.solita.botsofbf.graph.MoveTranslator;
@@ -45,7 +29,7 @@ public class BotController {
 
     @RequestMapping(value = "/bot", method = RequestMethod.GET)
     public void registerBot() throws UnknownHostException {
-        myBotId = registerPlayer("Siemens").id;
+        myBotId = registerPlayer("BlacSteve").id;
         sendChatMessage(myBotId, "Prepare to meet your maker!");
     }
 
