@@ -20,7 +20,7 @@ public class BotController {
 
 
     // FIXME use correct server IP address
-    private static final String SERVER_ADDRESS = "http://localhost:8080";
+    private static final String SERVER_ADDRESS = "http://192.168.2.85:8080";
 
     private static final String MY_REST_API_PATH = "/move";
     private static final String MY_REST_API_ADDRESS = "http://%s:3000" + MY_REST_API_PATH;
@@ -67,6 +67,25 @@ public class BotController {
         	return BotController.Move.PICK;
         }
         
+        if(Dijkstra.directionToRecover != null) {
+        	int x = from.x;
+        	int y = from.y;
+        	
+        	Move d = Dijkstra.directionToRecover;
+        	if(d.equals(Move.UP)) y--;
+        	if(d.equals(Move.DOWN)) y++;
+        	if(d.equals(Move.LEFT)) x--;
+        	if(d.equals(Move.RIGHT)) x++;
+        	
+        	Node n = GraphReader.getNodeByCoords(x, y);
+
+        	if(n.type == Node.FLOOR_TILE) {
+        		return d;
+        	} else {
+        		Dijkstra.directionToRecover = null;
+        	}
+        }
+        
     	Node next = Dijkstra.findPathSimple(target, from);
     	
     	
@@ -100,7 +119,7 @@ public class BotController {
     }
 
     private boolean canGetThisItem (final Player me, final Item i) {
-        if(Math.round(i.price * (i.discountPercent / 100)) <= me.money) return true;
+        if(Math.round(i.price * (i.discountPercent / 100d)) <= me.money) return true;
         return false;
     }
 
