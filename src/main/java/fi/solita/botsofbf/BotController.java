@@ -19,7 +19,13 @@ import org.springframework.web.client.RestTemplate;
 import fi.solita.botsofbf.graph.Dijkstra;
 import fi.solita.botsofbf.graph.GraphReader;
 import fi.solita.botsofbf.graph.Node;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
 
 
 @RestController
@@ -67,14 +73,14 @@ public class BotController {
         from.x = myPlayer.position.x;
         from.y = myPlayer.position.y;
         
-        for(Item i : items) {
-        	Node target = new Node();
-        	target.x = i.position.x;
-        	target.y = i.position.y;
-        	
-        	Node next = Dijkstra.findPath(target, from);
-        	System.out.println(next);
-        }
+        
+        Node target = new Node();
+        Item closest = getClosestItem(items, myPlayer);
+    	target.x = closest.position.x;
+    	target.y = closest.position.y;
+    	
+    	Node next = Dijkstra.findPath(target, from);
+    	System.out.println(next);
         
 
         System.out.println("My player is at " + myPlayer.position);
@@ -89,6 +95,24 @@ public class BotController {
         new RestTemplate().postForEntity(
                 String.format(SERVER_ADDRESS + "/%s/say", playerId),
                 message, Void.class);
+    }
+
+    private Item getClosestItem(final Set<Item> items, final Player me) {
+        Item closest = items.iterator().next();
+        double distance = Integer.MAX_VALUE;
+        for(Item i : items) {
+            int x1 = me.position.x;
+            int x2 = i.position.x;
+            int y1 = me.position.y;
+            int y2 = i.position.y;
+
+            double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+            if(distance2 < distance) {
+                closest = i;
+                distance = distance2;
+            }
+        }
+        return closest;
     }
 
 
