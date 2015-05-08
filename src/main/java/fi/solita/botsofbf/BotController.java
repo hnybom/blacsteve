@@ -62,9 +62,9 @@ public class BotController {
         Node from = GraphReader.getNodeByCoords(myPlayer.position.x, myPlayer.position.y);
         Node target = GraphReader.getNodeByCoords(closest.position.x, closest.position.y);
     	
-        //System.out.println("starting dijrksrkskr: " + System.currentTimeMillis());
+        long start = System.currentTimeMillis();
     	Node next = Dijkstra.findPath(target, from);
-    	System.out.println("path calculated: " + System.currentTimeMillis());
+    	System.out.println("Dijkstra kestää: " + (System.currentTimeMillis() - start));
     	
     	System.out.println("next" + next);
     	System.out.println("closest: " + target);

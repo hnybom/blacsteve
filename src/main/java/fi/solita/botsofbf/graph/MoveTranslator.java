@@ -15,8 +15,8 @@ public class MoveTranslator {
     public static BotController.Move translate(final Node whereAmI, final Node targeNode) {
         if(whereAmI.x < targeNode.x) return BotController.Move.RIGHT;
         if(whereAmI.x > targeNode.x) return BotController.Move.LEFT;
-        if(whereAmI.y < targeNode.y) return BotController.Move.UP;
-        if(whereAmI.y > targeNode.y) return BotController.Move.DOWN;
+        if(whereAmI.y > targeNode.y) return BotController.Move.UP;
+        if(whereAmI.y < targeNode.y) return BotController.Move.DOWN;
         throw new IllegalArgumentException("No moves available");
     }
 
