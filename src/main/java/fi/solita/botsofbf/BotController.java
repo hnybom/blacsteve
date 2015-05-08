@@ -1,24 +1,14 @@
 package fi.solita.botsofbf;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
-import java.util.UUID;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
 import fi.solita.botsofbf.graph.GraphReader;
 import fi.solita.botsofbf.graph.Node;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.*;
 
 
 @RestController
@@ -78,6 +68,24 @@ public class BotController {
         new RestTemplate().postForEntity(
                 String.format(SERVER_ADDRESS + "/%s/say", playerId),
                 message, Void.class);
+    }
+
+    private Item getClosestItem(final List<Item> items, final Player me) {
+        Item closest = items.get(0);
+        double distance = Integer.MAX_VALUE;
+        for(Item i : items) {
+            int x1 = me.position.x;
+            int x2 = i.position.x;
+            int y1 = me.position.y;
+            int y2 = i.position.y;
+
+            double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+            if(distance2 < distance) {
+                closest = i;
+                distance = distance2;
+            }
+        }
+        return closest;
     }
 
 
