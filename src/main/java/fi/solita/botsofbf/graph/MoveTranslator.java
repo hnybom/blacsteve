@@ -9,6 +9,10 @@ public class MoveTranslator {
 
     public static BotController.Move translate(final Node whereAmI, final Route route) {
         final Node targeNode = GraphReader.getMapCache().get(route.to);
+        return translate(whereAmI, targeNode);
+    }
+
+    public static BotController.Move translate(final Node whereAmI, final Node targeNode) {
         if(whereAmI.x < targeNode.x) return BotController.Move.RIGHT;
         if(whereAmI.x > targeNode.x) return BotController.Move.LEFT;
         if(whereAmI.y < targeNode.y) return BotController.Move.UP;
