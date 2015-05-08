@@ -12,10 +12,6 @@ import java.util.*;
 @RestController
 public class BotController {
 
-    // The map consists of tiles with one of the following type:
-    public static final char WALL_TILE = 'x';
-    public static final char FLOOR_TILE = '_';
-    public static final char EXIT_TILE = 'o';
 
     // FIXME use correct server IP address
     private static final String SERVER_ADDRESS = "http://192.168.2.86:8080";
