@@ -4,14 +4,15 @@ import fi.solita.botsofbf.graph.Dijkstra;
 import fi.solita.botsofbf.graph.GraphReader;
 import fi.solita.botsofbf.graph.MoveTranslator;
 import fi.solita.botsofbf.graph.Node;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 
 @RestController
@@ -84,7 +85,26 @@ public class BotController {
                 message, Void.class);
     }
 
+    private boolean canWeGetItems(final Set<Item> items, final Player me) {
+        for(Item i : items) {
+            if (canGetThisItem(me, i)) return true;
+        }
+        return false;
+    }
+
+    private boolean canGetThisItem (final Player me, final Item i) {
+        if(Math.round(i.price * (i.discountPercent / 100)) <= me.money) return true;
+        return false;
+    }
+
     private Item getClosestItem(final Set<Item> items, final Player me) {
+        if(! canWeGetItems(items, me)) {
+            Item item = new Item();
+            item.position = new Position();
+            item.position.x = GraphReader.exitNode.x;
+            item.position.y = GraphReader.exitNode.y;
+            return item;
+        }
         Item closest = items.iterator().next();
         double distance = Integer.MAX_VALUE;
         for(Item i : items) {
@@ -94,7 +114,7 @@ public class BotController {
             int y2 = i.position.y;
 
             double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
-            if(distance2 < distance) {
+            if(distance2 < distance && canGetThisItem(me, i)) {
                 closest = i;
                 distance = distance2;
             }
@@ -132,6 +152,7 @@ public class BotController {
 
     public static class Item {
         public int price;
+        public int discountPercent;
         public Position position;
         public Type type;
         public boolean isUsable;
