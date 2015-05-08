@@ -10,4 +10,12 @@ public class Route {
     public String from;
     public String to;
 
+    @Override
+    public String toString () {
+        return "Route{" +
+                "price=" + price +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                '}';
+    }
 }
