@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 
 public class Dijkstra {
 
+    private static boolean lastFailRoute = false;
+
     public static Node findPathSimple(Node target, Node from) {
         return GraphReader.getMapCache().get(getClosestItem(from.routes, from, target).to);
     }
@@ -66,6 +68,18 @@ public class Dijkstra {
                 distance = distance2;
             }
         }
+
+        if(distance == Integer.MAX_VALUE || lastFailRoute) {
+            lastFailRoute = true;
+            for(Route i : route) {
+                if(me.y < GraphReader.getMapCache().get(i.to).y) return i;
+                if(me.y > GraphReader.getMapCache().get(i.to).y) return i;
+                if(me.x < GraphReader.getMapCache().get(i.to).x) return i;
+                if(me.x > GraphReader.getMapCache().get(i.to).x) return i;
+            }
+        }
+
+        lastFailRoute = false;
         return closest;
     }
 }
