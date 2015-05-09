@@ -7,8 +7,8 @@ public class Route {
 
     public int price;
 
-    public String from;
-    public String to;
+    public Node from;
+    public Node to;
 
     @Override
     public String toString () {

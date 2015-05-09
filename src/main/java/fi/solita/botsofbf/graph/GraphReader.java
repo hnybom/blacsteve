@@ -41,10 +41,10 @@ public class GraphReader {
         }
 
         for(final Node n : mapCache.values()) {
-            for(String ids : getNeighbourIds(n, maxX, y -1)) {
+            for(String ids : getNeighbourIds(n, maxX, y)) {
                 Route r = new Route();
-                r.from = n.id;
-                r.to = ids;
+                r.from = mapCache.get(n.id);
+                r.to = mapCache.get(ids);
                 r.price = 1;
                 n.routes.add(r);
                 routes.add(r);

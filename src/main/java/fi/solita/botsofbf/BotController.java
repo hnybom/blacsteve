@@ -20,13 +20,11 @@ public class BotController {
 
 
     // FIXME use correct server IP address
-    private static final String SERVER_ADDRESS = "http://192.168.2.85:8080";
-
+    private static final String SERVER_ADDRESS = "http://localhost:8080";
     private static final String MY_REST_API_PATH = "/move";
     private static final String MY_REST_API_ADDRESS = "http://%s:3000" + MY_REST_API_PATH;
 
     private UUID myBotId;
-
 
     @RequestMapping(value = "/bot", method = RequestMethod.GET)
     public void registerBot() throws UnknownHostException {
@@ -53,11 +51,9 @@ public class BotController {
         Player myPlayer = gameStateChanged.playerState;
         Set<Item> items = gameStateChanged.gameState.items;
         Map map = gameStateChanged.gameState.map;
-        
-        //System.out.println("start: " + System.currentTimeMillis());
+
         GraphReader.loadMap(map.tiles);
-        //System.out.println("map loaded: " + System.currentTimeMillis());
-        
+
         
         Item closest = getClosestItem(items, myPlayer);
         Node from = GraphReader.getNodeByCoords(myPlayer.position.x, myPlayer.position.y);
@@ -66,43 +62,20 @@ public class BotController {
         if(from.id.equals(target.id)) {
         	return BotController.Move.PICK;
         }
-        
-        if(Dijkstra.directionToRecover != null) {
-        	int x = from.x;
-        	int y = from.y;
-        	
-        	Move d = Dijkstra.directionToRecover;
-        	if(d.equals(Move.UP)) y--;
-        	if(d.equals(Move.DOWN)) y++;
-        	if(d.equals(Move.LEFT)) x--;
-        	if(d.equals(Move.RIGHT)) x++;
-        	
-        	Node n = GraphReader.getNodeByCoords(x, y);
-
-        	if(n.type == Node.FLOOR_TILE) {
-        		return d;
-        	} else {
-        		Dijkstra.directionToRecover = null;
-        	}
+        Node endNode = Dijkstra.findPath(target, from);
+        while(endNode.previous != null) {
+            if(endNode.previous == from) break;
+            endNode = endNode.previous;
         }
-        
-    	Node next = Dijkstra.findPathSimple(target, from);
-    	
-    	
-    	
-    	
-    	
-    	
-    	System.out.println("next" + next);
+
+    	System.out.println("next" + endNode);
     	System.out.println("closest: " + target);
     	System.out.println("my pos" + from);
-        
-
         System.out.println("My player is at " + myPlayer.position);
         System.out.println("The map has " + items.size() + " items");
         System.out.println("The map consists of " + map.tiles.size() + " x " + map.tiles.get(0).length() + " tiles");
 
-        return MoveTranslator.translate(from, next);
+        return MoveTranslator.translate(from, endNode);
     }
 
     private void sendChatMessage(UUID playerId, String message) {
@@ -119,18 +92,14 @@ public class BotController {
     }
 
     private boolean canGetThisItem (final Player me, final Item i) {
-        if(Math.round(i.price * (i.discountPercent / 100d)) <= me.money) return true;
+        final long round = Math.round(i.price * (1 - (i.discountPercent / 100d)));
+        System.out.println("Price: " + i.price + " discount: " + i.discountPercent + " -> " + (1 - (i.discountPercent / 100d)));
+        System.out.println("Can we get: " + round + " <-> " + me.money);
+        if(round <= me.money) return true;
         return false;
     }
 
     private Item getClosestItem(final Set<Item> items, final Player me) {
-        if(! canWeGetItems(items, me)) {
-            Item item = new Item();
-            item.position = new Position();
-            item.position.x = GraphReader.exitNode.x;
-            item.position.y = GraphReader.exitNode.y;
-            return item;
-        }
         Item closest = items.iterator().next();
         double distance = Integer.MAX_VALUE;
         for(Item i : items) {
@@ -145,10 +114,18 @@ public class BotController {
                 distance = distance2;
             }
         }
+
+        if(!canGetThisItem(me, closest)) {
+            System.out.println("No Items we can get going home!");
+            Item item = new Item();
+            item.position = new Position();
+            item.position.x = GraphReader.exitNode.x;
+            item.position.y = GraphReader.exitNode.y;
+            return item;
+        }
+
         return closest;
     }
-
-
 
     public static class Map {
         public int width;

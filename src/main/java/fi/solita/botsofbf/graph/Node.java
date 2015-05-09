@@ -1,13 +1,12 @@
 package fi.solita.botsofbf.graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by henriny on 08/05/15.
  */
-public class Node {
+public class Node implements Comparable<Node> {
     // The map consists of tiles with one of the following type:
     public static final char WALL_TILE = 'x';
     public static final char FLOOR_TILE = '_';
@@ -20,13 +19,19 @@ public class Node {
 
     public char type;
 
+    public Node previous;
+
+    public int cost;
+
     public List<Route> routes = new ArrayList<>();
 
 	@Override
 	public String toString() {
-		return "Node [id=" + id + ", x=" + x + ", y=" + y + ", type=" + type
-				+ ", routes=" + Arrays.toString(routes.toArray()) + "]";
+        return id;
 	}
 
-
+    @Override
+    public int compareTo (final Node o) {
+        return Integer.compare(cost, o.cost);
+    }
 }

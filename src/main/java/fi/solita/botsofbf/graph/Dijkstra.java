@@ -1,15 +1,8 @@
 package fi.solita.botsofbf.graph;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 import fi.solita.botsofbf.BotController.Move;
+
+import java.util.*;
 
 public class Dijkstra {
 
@@ -22,43 +15,35 @@ public class Dijkstra {
     }
 
 
-	public static Node findPath(Node target, Node from) {
-		Map<Node, Integer> distances = new HashMap<Node, Integer>();
-		distances.put(from, 0);
-		
-		List<Node> Q = new ArrayList<>();
-		Map<String, Node> mapCache = GraphReader.getMapCache();
-		Map<Node, Node> previous = new HashMap<Node, Node>();
-		
-		Q.add(from);
-		
-		for(Node n : mapCache.values()) {
-			if(!n.id.equals(from.id)) {
-				distances.put(n, Integer.MAX_VALUE);
-			}
-		}
+    public static Node findPath(Node target, Node from) {
+        if(target == null ||from == null) return null;
 
-        final List<Node> alreadyCalculcated = new ArrayList<>();
+        GraphReader.getMapCache().values().stream().forEach(t ->  {
+            t.cost = Integer.MAX_VALUE;
+            t.previous = null;
+        });
+        final PriorityQueue<Node> Q = new PriorityQueue<>();
 
-		while(!Q.isEmpty()) {
-			Entry<Node, Integer> entry = distances.entrySet().stream().filter(t -> Q.contains(t.getKey())).min(Map.Entry.comparingByValue()).get();
-			Node u = entry.getKey();
-			Q.remove(u);
-            alreadyCalculcated.add(u);
-			for(Route r : u.routes.stream().filter(t -> !alreadyCalculcated.contains(mapCache.get(t.to))).collect(Collectors.toList()) ) {
-				int alt = distances.get(from) + r.price;
-				Node neighbor = mapCache.get(r.to);
-				if(alt < distances.get(neighbor)) {
-					distances.put(neighbor, alt);
-					previous.put(u, neighbor);
-					Q.add(neighbor);
-				}
-			}
-		}
-		
-		
-		return previous.get(from);
-	}
+        from.cost = 0;
+        Q.add(from);
+
+        while(!Q.isEmpty()) {
+            final Node u = Q.poll();
+            if(u.equals(target)) return target;
+            for(Route r : u.routes) {
+                int alt = u.cost + r.price;
+                Node neighbor = r.to;
+                if(alt < neighbor.cost) {
+                    neighbor.cost = alt;
+                    neighbor.previous = u;
+                    Q.add(neighbor);
+                }
+            }
+        }
+
+        return null;
+
+    }
 
     private static Route getClosestItem(final List<Route> route, final Node me, final Node target) {
         Route closest = route.iterator().next();
