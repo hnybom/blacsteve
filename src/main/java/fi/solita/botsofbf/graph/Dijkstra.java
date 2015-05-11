@@ -1,27 +1,16 @@
 package fi.solita.botsofbf.graph;
 
-import fi.solita.botsofbf.BotController.Move;
-
-import java.util.*;
+import java.util.List;
+import java.util.PriorityQueue;
 
 public class Dijkstra {
-
-    private static boolean lastFailRoute = false;
-    public static Move directionToRecover = null;
-    private static Node lastFailed = null;
-
-    public static Node findPathSimple(Node target, Node from) {
-        return GraphReader.getMapCache().get(getClosestItem(from.routes, from, target).to);
-    }
-
 
     public static Node findPath(Node target, Node from) {
         if(target == null ||from == null) return null;
 
-        GraphReader.getMapCache().values().stream().forEach(t ->  {
-            t.cost = Integer.MAX_VALUE;
-            t.previous = null;
-        });
+        synchronized (GraphReader.getMapCache()) {
+            GraphReader.initPaths();
+        }
         final PriorityQueue<Node> Q = new PriorityQueue<>();
 
         from.cost = 0;
@@ -52,8 +41,6 @@ public class Dijkstra {
         int x1 = target.x;
         int y1 = target.y;
 
-        double distance3 = Math.sqrt((x1 - me.x) * (x1 - me.x) + (y1 - me.y) * (y1 - me.y));
-
         for(Route i : route) {
             int x2 = GraphReader.getMapCache().get(i.to).x;
 
@@ -61,37 +48,19 @@ public class Dijkstra {
 
             double distance2 = Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 
-            if(distance2 < distance && distance2 < distance3 &&
-                    !GraphReader.getMapCache().get(i.to).equals(lastFailed)) {
-                lastFailRoute = false;
-                lastFailed = null;
-                directionToRecover = null;
+            if(distance2 < distance) {
+
                 closest = i;
                 distance = distance2;
             }
         }
 
-        if(distance == Integer.MAX_VALUE || lastFailRoute) {
-            lastFailRoute = true;
-            lastFailed = me;
+        if(distance == Integer.MAX_VALUE) {
             Route i = getRoute(route, me);
-            setRecoveryDirection(me, MoveTranslator.translate(me, i));
-
             if (i != null) return i;
         }
 
         return closest;
-    }
-    
-    private static Move setRecoveryDirection(final Node me, final Move direction) {
-    	if(directionToRecover == null) {
-	    	List<Move> directions = new ArrayList<Move>(Arrays.asList(Move.UP, Move.LEFT, Move.DOWN, Move.RIGHT));
-	    	directions.remove(direction);
-	    	Move newDirection = directions.get(new Random().nextInt(3));
-	    	directionToRecover = newDirection;
-    	}
-    	
-    	return directionToRecover;
     }
 
     private static Route getRoute (final List<Route> route, final Node me) {

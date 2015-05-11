@@ -17,41 +17,52 @@ public class GraphReader {
         return mapCache;
     }
 
+    public static void initPaths() {
+        synchronized (mapCache) {
+            mapCache.values().stream().forEach(t -> {
+                t.cost = Integer.MAX_VALUE;
+                t.previous = null;
+            });
+        }
+    }
+
     public static Map<String, Node> loadMap (final List<String> tiles) {
-        if (!mapCache.isEmpty()) return mapCache;
+        synchronized (mapCache) {
+            if (!mapCache.isEmpty()) return mapCache;
 
-        int x = 0;
-        int maxX = 0;
-        int y = 0;
+            int x = 0;
+            int maxX = 0;
+            int y = 0;
 
-        for (String tile : tiles) {
-            for (char c : tile.toCharArray()) {
-                final Node n = new Node();
-                n.x = x;
-                n.y = y;
-                n.type = c;
-                n.id = getId(n);
-                mapCache.put(n.id, n);
-                if (c == Node.EXIT_TILE) exitNode = n;
-                x++;
+            for (String tile : tiles) {
+                for (char c : tile.toCharArray()) {
+                    final Node n = new Node();
+                    n.x = x;
+                    n.y = y;
+                    n.type = c;
+                    n.id = getId(n);
+                    mapCache.put(n.id, n);
+                    if (c == Node.EXIT_TILE) exitNode = n;
+                    x++;
+                }
+                maxX = x;
+                x = 0;
+                y++;
             }
-            maxX = x;
-            x = 0;
-            y++;
-        }
 
-        for(final Node n : mapCache.values()) {
-            for(String ids : getNeighbourIds(n, maxX, y)) {
-                Route r = new Route();
-                r.from = mapCache.get(n.id);
-                r.to = mapCache.get(ids);
-                r.price = 1;
-                n.routes.add(r);
-                routes.add(r);
+            for (final Node n : mapCache.values()) {
+                for (String ids : getNeighbourIds(n, maxX, y)) {
+                    Route r = new Route();
+                    r.from = mapCache.get(n.id);
+                    r.to = mapCache.get(ids);
+                    r.price = 1;
+                    n.routes.add(r);
+                    routes.add(r);
+                }
             }
-        }
 
-        return mapCache;
+            return mapCache;
+        }
     }
 
     public static Set<Route> getRoutes() {

@@ -64,6 +64,7 @@ public class BotController {
         }
         Node endNode = Dijkstra.findPath(target, from);
         while(endNode.previous != null) {
+            System.out.println("path:" + endNode);
             if(endNode.previous == from) break;
             endNode = endNode.previous;
         }
@@ -84,17 +85,8 @@ public class BotController {
                 message, Void.class);
     }
 
-    private boolean canWeGetItems(final Set<Item> items, final Player me) {
-        for(Item i : items) {
-            if (canGetThisItem(me, i)) return true;
-        }
-        return false;
-    }
-
     private boolean canGetThisItem (final Player me, final Item i) {
         final long round = Math.round(i.price * (1 - (i.discountPercent / 100d)));
-        System.out.println("Price: " + i.price + " discount: " + i.discountPercent + " -> " + (1 - (i.discountPercent / 100d)));
-        System.out.println("Can we get: " + round + " <-> " + me.money);
         if(round <= me.money) return true;
         return false;
     }
